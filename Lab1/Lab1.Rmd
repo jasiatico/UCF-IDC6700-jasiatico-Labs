@@ -1,0 +1,196 @@
+---
+title: "Lab 1"
+author: Jackson Asiatico
+date: "January 19, 2024"
+output: html_document
+---
+
+
+# 2. Get the Data:
+
+## Inspect the Data
+* Are the column headers included in the file?
+  - Yes. The column headers are the first row.
+* How are data columns separated?
+  - Each column is separated by commas.
+* Are there comments in the data?
+  - There does not appear to be any comments in the data.
+
+## Load the Data
+```{r read}
+data <- read.table("lab1.dat", header = TRUE, sep = ",", comment.char = "")
+```
+
+
+# 3. Peruse the Data
+## Print the names of the variables in the data table
+```{r columnNames}
+colnames(data)
+```
+
+## Global Summary
+```{r summary}
+summary(data)
+```
+
+# 4. Investigate the WineType Variable
+## List values of WineType variable
+```{r WineType}
+WineType <- data$WineType
+print(WineType)
+unique(data$WineType)
+```
+
+## Compute the levels of that factor
+```{r WineTypeLevels}
+WineTypeLevels <- levels(factor(WineType))
+print(WineTypeLevels)
+```
+
+## Compute the number of records of each level
+```{r NumWineType}
+NumWineType <- table(WineType)
+print(NumWineType)
+```
+
+# 5. Investigate the ColorIntensity variable
+* Compute the mean of the ColorIntensity variable
+```{r ColorIntense}
+ColorIntenseMean <- mean(data$ColorIntensity)
+cat("The mean of Color Intensity is: ", ColorIntenseMean)
+```
+
+* Compute variance of the ColorIntensity variable
+```{r ColorIntense1}
+ColorIntenseVar <- var(data$ColorIntensity)
+cat("The variance of Color Intensity is: ", ColorIntenseVar)
+```
+
+* Compute standard deviation of the ColorIntensity variable
+```{r ColorIntense2}
+ColorIntenseSTD <- sd(data$ColorIntensity)
+cat("The standard deviation of Color Intensity is: ", ColorIntenseSTD)
+```
+
+* Compute 95% confidence interval of the ColorIntensity variable
+```{r ColorIntense3}
+ColorIntenseConfInter <- t.test(data$ColorIntensity)
+print(ColorIntenseConfInter)
+```
+
+
+# 6. Investigate the Hue variable for WineType Class1
+* Compute variance of the Hue variable across only the records with WineType=Class1
+```{r HueClass1}
+Class1HueVar <- var(subset(data$Hue, data$WineType == "Class1"))
+cat("The variance of the Hue variable for Class1: ", Class1HueVar)
+```
+
+* Compute standard deviation of the Hue variable across only the records with WineType=Class1
+```{r HueClass12}
+Class1HueSTD <- sd(subset(data$Hue, data$WineType == "Class1"))
+cat("The standard deviation of the Hue variable for Class1: ", Class1HueSTD)
+```
+
+* Compute 95% confidence interval of the Hue variable across only the records with WineType=Class1
+```{r HueClass13}
+Class1HueConf <- t.test(subset(data$Hue, data$WineType == "Class1"))$conf.int
+cat("The 95% confidence interval of the Hue variable for Class1: ","\n", Class1HueConf)
+```
+
+# 7. Perform simple math operations
+
+* Subtract 120 from 536
+```{r SimpleMath1}
+536-120
+```
+
+* Multiply 3 and 7
+```{r SimpleMath2}
+3*7
+```
+
+* Divide 12 by 3
+```{r SimpleMath3}
+12/3
+```
+
+* Take the base 2 logarithm of 128
+```{r SimpleMath4}
+log2(128)
+```
+
+* Compute nine cubed
+```{r SimpleMath5}
+9^3
+```
+
+# 8. Perform math operations on data columns
+
+* Compute the vector resulting from a pair-wise multiplication of all Hue variable values with ColorIntensity values
+```{r MathOps}
+A = data$Hue * data$ColorIntensity
+print(A)
+```
+* Sum the resulting vector from the previous step
+```{r MathOps1}
+B = sum(A)
+print(B)
+```
+
+# 9. Drawing random numbers
+
+* Draw 10 numbers from the uniform distribution, between 0.0 and 10.0
+```{r RandNum1}
+RandUnif <- runif(10, min=0.0,max=10.0)
+print(RandUnif)
+```
+
+* Draw 10 numbers from the Normal distribution, mean of 1.0, standard deviation of 0.3
+```{r RandNum2}
+RandNorm <- rnorm(10,mean=1.0,sd=0.3)
+print(RandNorm)
+```
+
+* Compute PDF result for the standard Normal distribution at the value 0.12
+```{r RandNum3}
+PDFNorm <- dnorm(0.12)
+print(PDFNorm)
+```
+* Compute the probability that a value drawn from the standard Normal distribution will be less than 1.96
+```{r RandNum4}
+Prob <- pnorm(1.96)
+print(Prob)
+```
+
+# 10. Simulation
+* Perform a Monte Carlo sampling simulation of customers arriving at a queue over the period of 10 minutes, assuming this process is governed by the Poisson distribution and that 2 customers arrive per minute on average 
+
+```{r Sim1}
+CustPerMin <- 2   # Customers arriving per minute
+TPeriod <- 10     # Time period
+x <- rpois(TPeriod, lambda=CustPerMin)
+print(x)
+```
+
+* Compute the total number of people standing in line at each minute for one such simulation?
+```{r Sim2}
+CustInLine <- cumsum(x)
+print(CustInLine)
+```
+
+* Enter the R code below, which defines a function. Call that function using n=10, then again using n=10000, then again using n=10000000. What does the function estimate?
+```{r Sim3}
+estimate <- function(n) {
+  return (4*sum((runif(n)^2 + runif(n)^2) < 1)/n)
+}
+
+Res1 <- estimate(10)
+print(Res1)
+
+Res2 <- estimate(10000)
+print(Res2)
+
+Res3 <- estimate(10000000)
+print(Res3)
+```
